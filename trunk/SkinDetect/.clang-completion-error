@@ -1,0 +1,4 @@
+/home/nqkhai/SkinDetect/control.cpp:1:10: fatal error: 'iostream' file not found
+#include <iostream>
+         ^
+1 error generated.
