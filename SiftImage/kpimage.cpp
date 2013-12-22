@@ -69,6 +69,13 @@ bool compare(double a, double b, double e)
     return(d < e && d > -e);
 }
 
+double distance(cv::Point2f p1, cv::Point2f p2)
+{
+    double x = (p1.x - p2.x)*(p1.x - p2.x);
+    double y = (p1.y - p2.y)*(p1.y - p2.y);
+    return sqrt(x + y);
+}
+
 std::vector<PairPoint> KPImage::getPairPoints(KPImage kpi)
 {
     KeyPoint* kp;
@@ -87,7 +94,7 @@ std::vector<PairPoint> KPImage::getPairPoints(KPImage kpi)
 	    //std::cout<<pair.getAngle() <<std::endl;
 	}
     }
-    for (int i = 0; i < pairs.size(); ++i)
+    for (int i = 0; i < (int)pairs.size(); ++i)
     {
 	std::cout<<pairs[i].getStart() <<" " <<pairs[i].getEnd() <<std::endl;
     }
@@ -106,12 +113,9 @@ std::vector<PairPoint> KPImage::getPairPoints(KPImage kpi)
     double N_end = br_end.x - tl_end.x;
     double x_scale = N_start/N_end;
     double y_scale = M_start/M_end;
-    //std::cout<<x_scale <<" " <<y_scale <<std::endl;
     N = pairs.size();
     std::cout<<N <<std::endl;
     std::vector<PairPoint> pair_filters;
-    //cv::Mat correct(M_start, N_start, CV_8UC1);
-    //cv::Mat correct_fil(M_start, N_start, CV_8UC1);
     cv::Mat correct, correct_fil;
     this->copyTo(correct);
     this->copyTo(correct_fil);
@@ -121,16 +125,14 @@ std::vector<PairPoint> KPImage::getPairPoints(KPImage kpi)
 	cv::Point2f p2_scale((double)pairs[i].getEnd().x*x_scale,
 			     (double)pairs[i].getEnd().y*y_scale);
 	cv::line(correct, p1, p2_scale, cv::Scalar(255, 0, 0), 1, CV_AA);
-	//std::cout<<p1 <<";" <<p2_scale <<std::endl;
-	if(!compare((double)p1.x, p2_scale.x, 10) ||
-	   !compare((double)p1.y, p2_scale.y, 10))
+	if(distance(p1, p2_scale) > 10)
 	    continue;
-	cv::line(correct_fil, p1, p2_scale, cv::Scalar(255, 0, 0), 1, CV_AA);
+	cv::line(correct_fil, p1, p2_scale, cv::Scalar(255), 1, CV_AA);
 	cv::Point2f p2(pairs[i].getEnd().x, pairs[i].getEnd().y);
 	pair_filters.push_back(PairPoint(p1, p2));
     }
-    cv::imwrite("database/test0/correct.png", correct);
-    cv::imwrite("database/test0/correct_fil.png", correct_fil);
+    cv::imwrite("database/test2/correct.png", correct);
+    cv::imwrite("database/test2/correct_fil.png", correct_fil);
     return pair_filters;
 }
 
@@ -143,7 +145,7 @@ void KPImage::drawCorrect(KPImage kpi, std::vector<PairPoint> pairs,
     {
 	cv::Point p1(pairs[i].getStart());
 	cv::Point p2(pairs[i].getEnd().x + this->cols, pairs[i].getEnd().y);
-	cv::line(image, p1, p2, cv::Scalar(0), 1, CV_AA);
+	cv::line(image, p1, p2, cv::Scalar(255), 1, CV_AA);
     }
     cv::imwrite(image_correct, image);
 }
@@ -181,7 +183,7 @@ KeyPoint* KPImage::getMatchKey(KeyPoint kp)
 	    dist2 = d;
 	}
     }
-    if (10*dist1 < 6*dist2)
+    if (10*dist1 < 5*dist2)
     {
 	return minkey;
     }

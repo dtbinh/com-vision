@@ -13,7 +13,7 @@
 #define CMD_EXT "exit"
 #define CMD_HELP "help"
 #define CMD_FKEY "fkey"
-#define CMD_SCORE "corr"
+#define CMD_CORRECT "corr"
 
 Control::Control()
 {
@@ -21,7 +21,7 @@ Control::Control()
 
 void Control::displayWelcome()
 {
-    cout<<"Bienvenue d'utiliser ctimage - l'auteur: NGUYEN Quoc Khai\n";
+    cout<<"Bienvenue d'utiliser siftimage - l'auteur: NGUYEN Quoc Khai\n";
     cout<<"==================================================\n";
 }
 
@@ -31,7 +31,7 @@ void Control::displayWelcome()
 void Control::displayMenu()
 {
     cout<<"Vous pourriez taper:\n";
-    cout<<"1) fkey repertoire_image repertoire_key - "
+    cout<<"1) fkey image_name key_name - "
 	<<"Pour chercher des points intérêts\n";
     cout<<"2) corr img1 key1 img2 key2 img_correct- "
 	<<"Pour correct entre 2 images\n";
@@ -89,10 +89,8 @@ void Control::processCommand()
 	    key_name = cmd_elem.at(2);
 	    findKeyPoint(image_name, key_name);
 	}
-	if(cmd.compare(CMD_SCORE) == 0)
+	if(cmd.compare(CMD_CORRECT) == 0)
 	{
-	    if(size < 4)
-		continue;
 	    if(size < 6)
 		continue;
 	    img1 = cmd_elem.at(1);
